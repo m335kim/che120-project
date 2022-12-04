@@ -1,5 +1,6 @@
-"""Tron, classic arcade game.
-
+#TM - Tristan Moller
+#MK - Matthew Kim (20882490)
+"""
 Exercises
 
 1. Make the tron players faster/slower.
@@ -9,55 +10,100 @@ Exercises
 """
 
 from turtle import *
-
+#TM - The turtle module allows programmer to add shapes and pictures such as squares to be used as graphics in pygame
 from freegames import square, vector
+#MK - The module freegames is a licensed collection of free games written in Python
 
 p1xy = vector(-100, 0)
+#TM - Sets starting and end point of inital vector for player 1
 p1aim = vector(4, 0)
+#TM - Sets initial speed and direction for the vector
 p1body = set()
 
 p2xy = vector(100, 0)
+#MK - Sets starting and end point of initial vector for player 2
 p2aim = vector(-4, 0)
+#MK - Sets initial speed and direction for the vector
 p2body = set()
 
+speed_block = vector(0,100)
+#MK - Changes made so a speed block is placed on the screen, players speed up when block is hit
+speed_block = set()
+
+def speed_block(hit):
+  #MK - Change we made: When speed block is hit, the player will speed up.
+  if p1xy in speed_block:
+    p1aim = vector(8,0)
+    #MK - When Player 1 hits speed block, player 1 will speed up at twice the original speed
+  if p2xy in speed_block:
+    p2aim = vector(-8,0)
+    #MK - When Player 2 hits speed block, player 2 will speed up at twice the original speed
+    return
 
 def inside(head):
     """Return True if head inside screen."""
     return -200 < head.x < 200 and -200 < head.y < 200
-
+  #TM - This function returns true if the head of the vector is still in the screen.
 
 def draw():
+  #MK - the draw function allows players to advance.
     """Advance players and draw game."""
     p1xy.move(p1aim)
+  #MK - Player 1 moves 4 to the right
     p1head = p1xy.copy()
+  #MK - Creates a copy of the red line after Player 1 has made their move
 
     p2xy.move(p2aim)
+  #MK - Player 2 moves 4 units to the left
     p2head = p2xy.copy()
+  #MK - Creates a copy of the blue line after Player 2 has made their move
 
-    if not inside(p1head) or p1head in p2body:
+    if not inside(p1head) or p1head in p2body or p1head in p1body:
         print('Player blue wins!')
         return
+      #TM - If p1head which is the head of the red vector is either offscreen or hits the body of the blue vector, the game ends and it prints that player blue wins
+      #TM - Change we made to the game so that if you hit your own body, you lose
 
-    if not inside(p2head) or p2head in p1body:
+    if not inside(p2head) or p2head in p1body or p2head in p2body:
         print('Player red wins!')
         return
+      #TM - If p2head which is the head of the blue vector is either offscreen or hits the body of the red vector, the game ends and it prints that player red wins
+      #TM - Change we made to the game so that if you hit your body, you lose
 
     p1body.add(p1head)
+  #MK - To the body of the new red line, adds the old copy.
+  #MK - Connects all red lines.
     p2body.add(p2head)
+  #MK - To the body of the new blue, line adds the old copy.
+  #MK - Connects all blue lines.
 
     square(p1xy.x, p1xy.y, 3, 'red')
+  #MK - Sets the position of Player 1's line at coordinates (p1xy.x, p1xy.y), with length 3, and colour red
     square(p2xy.x, p2xy.y, 3, 'blue')
+  #MK - Sets the position of Player 2's line at coordinates (p2xy.x, p2xy.y), with length 3, and colour blue
     update()
+  #MK - When no animation is running, the update function performs a turtle screen update.
     ontimer(draw, 50)
+  #MK - Ontimer function installs draw after 50 milliseconds.
 
 
 setup(420, 420, 370, 0)
+#TM - The setup function sets the size and proportions of the screen that is used.
 hideturtle()
+#TM - Hides the turtle that comes from the turtle module which makes the program run faster than if it was showing
 tracer(False)
+#TM - When the tracer function is false, it hides the program updates from the user
 listen()
+# MK - When user makes a move on the keyboard, the function listens for each event and responds by running the function.
 onkey(lambda: p1aim.rotate(90), 'a')
+# TM - Rotates the direction of the red vector by 90 degrees clockwise
 onkey(lambda: p1aim.rotate(-90), 'd')
+# TM - Rotates the direction of the red vector by 90 degrees counter-clockwise
 onkey(lambda: p2aim.rotate(90), 'j')
+# TM - Rotates the direction of the blue vector by 90 degrees clockwise
 onkey(lambda: p2aim.rotate(-90), 'l')
+# TM - Rotates the direction of the blue vector by 90 degrees counter-clockwise
 draw()
+#TM - Starts the draw function which allows the vectors to move
 done()
+#TM - The done function stops execution of the code
